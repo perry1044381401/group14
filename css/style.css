@@ -64,6 +64,12 @@ html,body,.container {
 	margin-bottom: .5em;
 }
 
+#wrapper {
+			height: 96%;
+			border-radius: 5px;
+			background-color: #ffffff;
+			overflow-y: scroll;
+		}
 
 
 
