@@ -1,4 +1,8 @@
 <style>
+ 	a{
+ 		text-decoration: none;
+ 		color:#B80000;
+ 	}
 	.btns {
 		margin-bottom: 5px;
 	}
@@ -26,10 +30,81 @@
 		background-color: #ededed;
 	}
 
-	.none {
+	.forms {
 		display: none;
 	}
+	.forms_current{
+		display: block;
+		/*border:1px solid #ccc;*/
+		margin-top: 10px;
+		margin-bottom: 10px;
+		border-radius: 5px;
+		padding-top: 10px;
+		padding-left: 10px;
+		box-sizing: border-box;
+		background-color:  #88C1DF;
+		box-shadow: 1px 1px 5px #0D519C;
+
+	}
+	.btn_add_current{
+		background-color: #88C1DF;
+		color:#fff;
+		box-shadow: 1px 1px 5px #0D519C;
+	}
+	.save{
+		background-color: #ccc;
+		border-radius: 5px;
+		
+		width:80px;
+		height: 25px;
+		height: 25px;
+	}
 </style>
+<div class="customer">
+	<div class="btns">
+		<div class="btn" id="btn_add">添加</div>
+		<div class="btn">批量导入</div>
+		<div class="btn">批量删除</div>
+	</div>
+	<div class="forms" >
+		<form action="javascript:void(0)">
+			<input type="hidden" name="id" value="">
+			<table id="add">
+				<tbody>
+					<tr>
+						<td>姓名</td>
+						<td><input type="text" name="realname"></td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>手机号</td>
+						<td><input type="text" name="telephone"></td>
+						<td></td>
+					</tr>
+					<tr>
+						<td colspan="2"><input type="submit" value="保存" class="save"></td>
+
+					</tr>
+				</tbody>
+			</table>
+		</form>
+	</div>
+	<table class="table" id="customer_tbl">
+		<thead>
+			<tr>
+				<th width="60px">编号</th>
+				<th width="200px">姓名</th>
+				<th>头像</th>
+				<th>手机</th>
+				<th width="100px">操作</th>
+			</tr>
+		</thead>
+		<tbody>
+			
+		</tbody>
+	</table>
+
+</div>
 <script src="https://cdn.bootcss.com/jquery/3.4.1/jquery.min.js"></script>
 <script>
 var baseURL = "http://134.175.154.93:6677";
@@ -37,6 +112,7 @@ var baseURL = "http://134.175.154.93:6677";
 function initData(){
 	var url = "/customer/findCustomerAll"
 	$.get(baseURL+url,function(response){
+		//清空表单数据
 		$("#customer_tbl > tbody").empty();
 		response.data.forEach(function(item){
 			var newTr = $(`<tr>
@@ -61,60 +137,82 @@ $(function(){
 	$("#customer_tbl > tbody").on("click","a",function(){
 		switch(this.className){
 			case "btn_del":
-				alert("del");
-				var id = $(this).parents("tr").find("input").val()
+				//找到要删除那行的id值
+				var id = $(this).parents("tr").find("input").val();
+				var url="/customer/deleteCustomerById";
+				var data="id="+id;
+				$.post(baseURL+url,data,function(response){
+					alert(response.message);
+					initData();
+				});
 				break;
 			case "btn_upd":
-				alert("upd");
+			//获取id,realname,telephone的值
+			
+				var id = $(this).parents("tr").find("input").val();
+				var realname=$(this).parents("tr").children()[1].innerText;
+				var telephone=$(this).parents("tr").children()[3].innerText;
+				//将所获取的值放在添加下面的表单内
+				$("form>input[name=id]").val(id);
+				$("input[name=realname]").val(realname);
+				$("input[name=telephone]").val(telephone);
 				break;
 		}
+	});
+	//为添加按钮添加事件
+	$("#btn_add").click(function(){
+		//清空数据	
+		
+		$(".forms").addClass("forms_current");
+		$(this).addClass("btn_add_current");
+		$("input[name=id]").val("");
+		$("input[name=realname ]").val("");
+		$("input[name=telephone]").val("");
+	})
+	
+		
+
+	//为保存按钮添加事件
+	$("form").submit(function(){
+		var id=$("input[name=id]").val();
+		var realname=$("input[name=realname]").val();
+		var telephone=$("input[name=telephone]").val();
+		if(realname==null&&telephone==null){
+			alert("请填写名字和手机");
+		}
+		var data;
+		if(id){
+			data={
+				id:id,
+				realname:realname,
+				telephone:telephone
+			}
+		}else{
+			data={
+				realname:realname,
+				telephone:telephone
+			}
+		}
+		var url="/customer/saveCustomerOrUpdateCustomer";
+		$.post(baseURL+url,data,function(response){
+			alert(response.message);
+			initData();
+		})
+	});
+
+	//鼠标移入移出
+	$("#customer_tbl > tbody").on("mouseover","tr",function(){
+		$(this).css("background-color"," #88C1DF");
+		$(this).css("color"," #fff");
+	});
+	$("#customer_tbl > tbody").on("mouseout","tr",function(){
+		$(this).css("background-color","");
+		$(this).css("color","#333");
+	});
+
 	})
 
 
 
-})
-</script>
-<div class="customer">
-	<div class="btns">
-		<div class="btn" id="btn_add">添加</div>
-		<div class="btn">批量导入</div>
-		<div class="btn">批量删除</div>
-	</div>
-	<div class="forms">
-		<form action="javascript:void(0)">
-			<input type="hidden" name="id">
-			<table>
-				<tbody>
-					<tr>
-						<td>姓名</td>
-						<td><input type="text" name="realname"></td>
-						<td></td>
-					</tr>
-					<tr>
-						<td>手机号</td>
-						<td><input type="text" name="telephone"></td>
-						<td></td>
-					</tr>
-					<tr>
-						<td><input type="submit" value="保存"></td>
-					</tr>
-				</tbody>
-			</table>
-		</form>
-	</div>
-	<table class="table" id="customer_tbl">
-		<thead>
-			<tr>
-				<th width="60px">编号</th>
-				<th width="200px">姓名</th>
-				<th>头像</th>
-				<th>手机</th>
-				<th width="100px">操作</th>
-			</tr>
-		</thead>
-		<tbody>
-			
-		</tbody>
-	</table>
 
-</div>
+</script>
