@@ -76,6 +76,29 @@
 </div>
 <script src="https://cdn.bootcss.com/jquery/3.4.1/jquery.min.js"></script>
 <script>
+	var baseURL = "http://134.175.154.93:6677";
+// 初始化数据
+function initData(){
+	var url = "/customer/findCustomerAll"
+	$.get(baseURL+url,function(response){
+		$("#customer_tbl > tbody").empty();
+		response.data.forEach(function(item){
+			var newTr = $(`<tr>
+				<td><input type="checkbox" value="`+item.id+`"></td>
+				<td>`+item.realname+`</td>
+				<td>`+item.status+`</td>
+				<td>`+item.telephone+`</td>
+				<td>
+					<a class="btn_del" href="javascript:void(0)">删除</a>
+					<a class="btn_upd" href="javascript:void(0)">修改</a>
+				</td>
+			</tr>`);
+			$("#customer_tbl > tbody").append(newTr);
+		});
+	});
+}
+</script>
+<script>
 	var btn_add = document.getElementById("btn_add");
 	var tbody = document.getElementsByTagName("tbody")[1];
 	var baseURL = "http://134.175.154.93:6677";
