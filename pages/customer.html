@@ -116,7 +116,7 @@ function initData(){
 		$("#customer_tbl > tbody").empty();
 		response.data.forEach(function(item){
 			var newTr = $(`<tr>
-				<td><input type="checkbox" value="`+item.id+`"></td>
+				<td><input type="checkbox" value="`+item.id+`" name="check"></td>
 				<td>`+item.realname+`</td>
 				<td>`+item.status+`</td>
 				<td>`+item.telephone+`</td>
@@ -147,10 +147,9 @@ $(function(){
 				});
 				break;
 			case "btn_upd":
-			
 				//点击修改按钮，出现修改表单
-			    $(".forms").addClass("forms_current");
-			    //获取id,realname,telephone的值
+				$(".forms").addClass("forms_current");
+				//获取id,realname,telephone的值
 				var id = $(this).parents("tr").find("input").val();
 				var realname=$(this).parents("tr").children()[1].innerText;
 				var telephone=$(this).parents("tr").children()[3].innerText;
@@ -201,8 +200,27 @@ $(function(){
 			initData();
 		})
 	});
-     //为批量删除按钮添加事件
-     
+	//通过点击编号框，使input变成checked
+	 $("#customer_tbl > tbody").on("click","input",function(){
+       $("input[name=check]").prop("checked")==true;  
+         	       
+    });
+	
+     //给批量删除绑定事件，将input为checked的id值放入数组ids中
+     $("#btn_dels").click(function(){       
+        var ids=[];     
+        $("input[name=check]:checked").each(function(){
+        	ids.push($(this).val());   
+        }); 
+        //传给后台的id值，以ids=xxx形式  
+         var data="ids="+ids;
+        var url="/customer/batchDeleteCustomer";
+        $.post(baseURL+url,data,function(response){
+        	alert(response.message);
+        	initData();   	
+        })
+	})
+
 	//鼠标移入移出
 	$("#customer_tbl > tbody").on("mouseover","tr",function(){
 		$(this).css("background-color"," #88C1DF");
