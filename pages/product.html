@@ -1,0 +1,215 @@
+<style>
+		.btns {
+			margin-bottom: 5px;
+		}
+		.btn {
+			display: inline-block;
+			padding: .3em 1.2em;
+			border-radius: 3px;
+			border: 1px solid #ccc;
+			color: #333;
+			cursor :pointer;
+		}
+		table.table {
+			box-sizing: border-box;
+			width: 100%;
+			border-collapse: collapse;
+		}
+		table.table td ,
+		table.table th {
+			border: 1px solid #ccc;
+			line-height: 2em;
+			text-align: center;
+		}
+
+		table.table tr.current {
+			background-color: #ededed;
+		}
+
+		.none {
+			display: none;
+		}
+</style>
+
+<script src="https://cdn.bootcss.com/jquery/3.4.1/jquery.min.js"></script>
+<script>
+var btn_add = $("#btn_add");
+var baseURL = "http://134.175.154.93:6677";
+	//初始化数据
+		function initDate(){
+			var url = "/product/findAllProduct";
+			$.get(baseURL+url,function(response){
+				$("#product_tbl > tbody").empty();
+				response.data.forEach(function(item){
+				var newTr = $(`<tr>
+				<td><input type="checkbox" value="`+item.id+`"></td>
+				<td>`+item.name+`</td>				
+				<td>`+item.description+`</td>
+				<td>`+item.price+`</td>
+				<td>`+item.classify+`</td>			
+				<td>`+item.photo+`</td>		
+				<td width="150px">
+					<a class="btn_del" href="javascript:void(0);">删除</a>
+					<a class="btn_upd" href="javascript:void(0);">修改</a>
+					<a class="btn_det" href="javascript:void(0);">详情</a>
+				</td>
+			</tr>`);
+				$("#product_tbl > tbody").append(newTr);
+				});
+			});
+		}
+
+$(function(){
+	// 初始化加载
+	initDate();
+	//为删除按钮绑定事件
+	$("#product_tbl > tbody").on("click","a",function(){
+		switch(this.className){
+			case "btn_del":
+			// alert("del");
+			var id = $(this).parents("tr").find("input").val();
+			// console.log(id);
+			var url = "/product/deleteProductById";
+			data = {
+				id:id
+			};
+			$.post(baseURL+url,data,function(result){
+				alert(result.message);
+				initDate();
+			})
+
+			// console.log(id);
+			break;
+			case "btn_upd":
+			var id = $(this).parents("tr").find("input").val();
+			var name = $(this).parents("tr").find("td").eq(1).text();
+			var description = $(this).parents("tr").find("td").eq(2).text();
+			// console.log(telephone);
+			var price = $(this).parents("tr").find("td").eq(3).text();
+			var classify = $(this).parents("tr").find("td").eq(4).text();
+			// $('input[name="realname"]').val() = realname;
+			$('input[name="id"]').attr("value",id);
+			$('input[name="name"]').attr("value",name);
+			$('input[name="description"]').attr("value",description);
+			$('input[name="price"]').attr("value",price);
+			$('input[name="classify"]').attr("value",classify);
+			// alert("upd");
+			break;
+		}
+	})
+	})
+
+//为添加按钮绑定事件
+    $("#btn_add").on("click",function(){
+	$('input[name="name"]').val()="";
+	// $('input[name="telephone"]').attr("value",);
+	// $('input[name="password"]').attr("value",);
+});
+
+//为提交保存按钮绑定事件
+$(function(){
+		$(".forms").submit(function(){
+			var name = $('input[name="name"]').val();
+			var description = $('input[name="description"]').val();
+			var id = $('input[name="id"]').val();
+			var price = $('input[name="price"]').val();
+			var classify = $('input[name="classify"]').val();
+			var photo = $('input[name="photo"]').val();
+			var url1 = "/product/insertProduct";
+			var url2 = "/product/updateProduct";
+			var data;
+			if(id){
+				data = {
+					id:id,
+					name:name,
+					description:description,
+					price:price,
+					classify:classify,
+					photo:photo
+				}
+			 $.post(baseURL+url2,data,function(result){
+				alert(result.message);
+				initDate();
+			});
+			}
+			 else {
+				data = {
+					name:name,
+					description:description,
+					price:price,
+					classify:classify,
+					photo:photo
+				}
+			 $.post(baseURL+url1,data,function(result){
+				alert(result.message);
+				initDate();
+			});
+			};
+			event.preventDefault();
+		})
+})
+$("#allCheckbox").click(function() {
+     if($(this).attr("checked")) {
+        $(":checkbox:not(#allCheckbox)").attr("checked", true);
+    } else {
+        $(":checkbox:not(#allCheckbox)").attr("checked", false);
+    }
+});
+</script>
+
+<div class="product">
+	<div class="btns">
+		<div class="btn" id="btn_add">添加</div>
+		<div class="btn">批量删除</div>
+		<div class="btn">导入</div>		
+	</div>
+	<div class="forms">
+		<form action="javascript:void(0)">
+			<input type="hidden" name="id">
+			<table>
+				<tbody>
+					<tr>
+						<td>商品名称</td>
+						<td><input type="text" name="name"></td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>商品描述</td>
+						<td><input type="text" name="description"></td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>商品价格</td>
+						<td><input type="password" name="price"></td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>所属分类</td>
+						<td><input type="text" name="classify"></td>
+						<td></td>
+					</tr>
+					<tr>
+						<td class="submit"><input type="submit" value="保存"></td>
+					</tr>
+				</tbody>
+			</table>
+		</form>
+	</div>
+	<table class="table" id="product_tbl">
+		<thead>
+			<tr>
+				<th width="60px" id="allCheckbox"><input type="checkbox"></th>
+				<th width="200px">商品名称</th>
+				<th>商品描述</th>
+				<th>价格</th>
+				<th>所属分类</th>
+				<th>照片</th>
+				<th width="100px">操作</th>
+			</tr>
+		</thead>
+		<tbody>
+			
+		</tbody>
+		</table>
+</div>
+</div>
