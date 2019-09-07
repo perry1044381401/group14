@@ -22,18 +22,19 @@
 			text-align: center;
 		}
 
-		table.table tr.current {
+		table#product_tbl tr.current {
 			background-color: #ededed;
 		}
-
 		.none {
 			display: none;
 		}
+		/*.product_yc{
+			display: none;
+		}*/
 </style>
 
 <script src="https://cdn.bootcss.com/jquery/3.4.1/jquery.min.js"></script>
 <script>
-var btn_add = $("#btn_add");
 var baseURL = "http://134.175.154.93:6677";
 	//初始化数据
 		function initDate(){
@@ -41,7 +42,7 @@ var baseURL = "http://134.175.154.93:6677";
 			$.get(baseURL+url,function(response){
 				$("#product_tbl > tbody").empty();
 				response.data.forEach(function(item){
-				var newTr = $(`<tr>
+				var newTr = $(`<tr id="list">
 				<td><input type="checkbox" value="`+item.id+`"></td>
 				<td>`+item.name+`</td>				
 				<td>`+item.description+`</td>
@@ -88,11 +89,11 @@ $(function(){
 			var price = $(this).parents("tr").find("td").eq(3).text();
 			var classify = $(this).parents("tr").find("td").eq(4).text();
 			// $('input[name="realname"]').val() = realname;
-			$('input[name="id"]').attr("value",id);
-			$('input[name="name"]').attr("value",name);
-			$('input[name="description"]').attr("value",description);
-			$('input[name="price"]').attr("value",price);
-			$('input[name="classify"]').attr("value",classify);
+			$('input[name="id"]').val(id);
+			$('input[name="name"]').val(name);
+			$('input[name="description"]').val(description);
+			$('input[name="price"]').val(price);
+			$('input[name="classify"]').val(classify);
 			// alert("upd");
 			break;
 		}
@@ -100,11 +101,18 @@ $(function(){
 	})
 
 //为添加按钮绑定事件
-    $("#btn_add").on("click",function(){
-	$('input[name="name"]').val()="";
-	// $('input[name="telephone"]').attr("value",);
-	// $('input[name="password"]').attr("value",);
-});
+$(function(){
+	$('.product_yc').hide();
+	$("#btn_add").click(function(){
+	$('.product_yc').show();
+	$('input[name="name"]').val("");
+	$('input[name="description"]').val("");
+	$('input[name="price"]').val("");
+	$('input[name="classify"]').val("");
+	// window.location.reload();
+})
+})
+    
 
 //为提交保存按钮绑定事件
 $(function(){
@@ -148,23 +156,66 @@ $(function(){
 			event.preventDefault();
 		})
 })
-$("#allCheckbox").click(function() {
-     if($(this).attr("checked")) {
-        $(":checkbox:not(#allCheckbox)").attr("checked", true);
+
+//全选反选按钮绑定事件
+$(function(){
+	$("#all").click(function(){
+     if(this.checked){
+        $("#list input[type='checkbox']").prop("checked",true);
     } else {
-        $(":checkbox:not(#allCheckbox)").attr("checked", false);
+        $("#list input[type='checkbox']").prop("checked",false);
     }
 });
+})
+
+// 鼠标放上去当前行添加背景色
+       $(function(){
+       	$("#product_tbl > tbody").on("mouseover","tr",function(){
+			$(this).addClass("current");	
+		})
+
+		$("#product_tbl > tbody").on("mouseout","tr",function(){
+			$(this).removeClass("current");
+		})
+       })
+		
+
+//批量删除按钮绑定事件
+$(function(){
+	$("#btn_dels").click(function(){
+		if(confirm('确认要删除选中的商品信息吗?')==true){                
+            var obj=$("#list input[type='checkbox']"); 
+            var s=new Array(); 
+            for(var i=0; i<obj.length; i++){ 
+            if(obj[i].checked){
+                s[i]=obj[i].value;
+            } //如果选中，将value添加到数组s中 
+            } 
+            //那么现在来检测s的值就知道选中的复选框的值了 
+            alert(s==''?'你还没有选择任何内容！':s);
+            // alert(s);
+            var url = "/product/deleteBathProduct";
+            var data = {
+            	ids:s
+            }
+            $.post(baseURL+url,data,function(result){
+            	alert(result.message);
+				initDate();
+            })
+            // window.location.href="";
+            }
+	})
+})
 </script>
 
 <div class="product">
 	<div class="btns">
 		<div class="btn" id="btn_add">添加</div>
-		<div class="btn">批量删除</div>
+		<div class="btn" id="btn_dels">批量删除</div>
 		<div class="btn">导入</div>		
 	</div>
 	<div class="forms">
-		<form action="javascript:void(0)">
+		<form action="javascript:void(0)" class="product_yc">
 			<input type="hidden" name="id">
 			<table>
 				<tbody>
@@ -198,7 +249,7 @@ $("#allCheckbox").click(function() {
 	<table class="table" id="product_tbl">
 		<thead>
 			<tr>
-				<th width="60px" id="allCheckbox"><input type="checkbox"></th>
+				<th width="60px" id="all"><input type="checkbox"></th>
 				<th width="200px">商品名称</th>
 				<th>商品描述</th>
 				<th>价格</th>
