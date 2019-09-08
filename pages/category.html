@@ -1,4 +1,13 @@
-<style>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>分类管理</title>
+	<script src="https://cdn.bootcss.com/jquery/3.4.1/jquery.min.js"></script>
+	
+</head>
+<body>
+	<style>
 	.btns {
 		margin-bottom: 5px;
 	}
@@ -29,19 +38,21 @@
 	.none {
 		display: none;
 	}
+	.forms {
+		display: none;
+	}
 </style>
-<script src="https://cdn.bootcss.com/jquery/3.4.1/jquery.min.js"></script>
 <script>
-var baseURL = "http://134.175.154.93:6677";
-//查询所有分类信息
-// 初始化数据
+	var baseURL = "http://134.175.154.93:6677";
+	//查询所有分类信息
+	//初始化数据
 function initData(){
-	var url = "/category/findAllCategory"
+	var url = "/category/findAllCategory "
 	$.get(baseURL+url,function(response){
 		$("#customer_tbl > tbody").empty();
 		response.data.forEach(function(item){
 			var newTr = $(`<tr>
-				<td><input type="checkbox" value="`+item.id+`"></td>
+				<td><input type="checkbox" name = "id" value="`+item.id+`"></td>
 				<td>`+item.name+`</td>
 				<td>`+item.num+`</td>
 				<td>`+item.parentId+`</td>
@@ -54,93 +65,105 @@ function initData(){
 		});
 	});
 }
-
-//为添加按钮绑定事件处理函数
+//为添加按钮添加事件处理函数
 var add = function (){
-	$("#btn_add").on("click",function(){
-		//2、获取有效值
-		var name = $("input[name=name]").val();
-		// console.log($("input[name=name]"));
-		var num = $("input[name=num]").val();
-		var data = "name="+name+"&num="+num;
-		var url = "/category/insertCategory";
-		$.post(baseURL+url,data,function(result){
-			alert(result.message);
-			initData();
-		});
-		//清空表单
-		$("input[name=id]").val("");
-		$("input[name=name]").val("");
-		$("input[name=num]").val("");
-	});
-}
-//删除/修改功能绑定事件
-function del(){
-	//为删除按钮添加绑定事件
-	$("#customer_tbl > tbody").on("click","a",function(){
-		switch(this.className){
-			case "btn_del":
-			var url = baseURL+"/category/deleteByCategoryId";   //从后台寻找删除的id
-			//获取id
-			var id = $(this).parents("tr").find("input").val();
-			alert(id);
-			console.log(id)
-			var data = "id="+id;
-			$.post(url,data,function(result){
+	$("input[type=submit]").on("click",function(){
+		// 2. 获取有效值
+			var name = $("input[name=name]").val();
+			var num = $("input[name=num]").val();
+			var data = "name="+name+"&num="+num;
+			var url = "/category/insertCategory ";
+			$.post(baseURL+url,data,function(result){
 				alert(result.message);
 				initData();
 			});
-			break;
+
+			$("input[name = id]").val("");
+			$("input[name=name]").val("");
+			$("input[name=num]").val("");
+	});
+	$("#btn_add").click(function(){
+		$(".forms").css({display:"block"});
+
+
+	})
+}
+
+// 删除/修改功能
+function del() {
+	// 为删除按钮绑定事件
+		$("#customer_tbl > tbody").on("click","a",function(){
+		switch(this.className){
+			case "btn_del":
+				var url = baseURL+"/category/deleteByCategoryId ";
+				//获取Id
+				var id = $(this).parents("tr").find("input").val();
+				var data = "id="+id;
+				$.post(url,data,function(result){
+					alert(result.message);
+					initData();
+				});
+				break;
 			case "btn_upd":
-			var id = $(this).parents("tr").find("input").val();
-			//获取表格中姓名和手机的值
-			var name = event.target.parentNode.parentNode.children[1].innerText;
-			var num = event.target.parentNode.parentNode.children[3].innerText;
-			//将表格中的姓名和手机添加到表单中
-			$("input[name=name]").val(name);
-			$("input[name=num]").val(num);
-			$("input[name=id]").val(id);
-			break;
+				// 1. 将原有的信息放到表单
+				//获取他的父节点，然后获取他父亲的兄弟的孩子为input节点
+				// var id = $(this).parent().siblings("td").children("select[name='id']").val();
+				var id = $(this).parents("tr").find("input").val();
+				//获取表格中姓名和手机的值
+				var name = event.target.parentNode.parentNode.children[1].innerText;
+				var num = event.target.parentNode.parentNode.children[3].innerText;
+				//将表格中姓名和手机的值添加到表单中
+				$("input[name=name]").val(name);
+				$("input[name=num]").val(num);
+				$("input[name=id]").val(id);
+				break;
 		}
 	});
 }
 //保存功能
 function save(){
 	//保存数据
-	$(".forms input[type = submit]").on("click",function(event){
-		//1、校验有效性
-		//2、获取有限性
-		var name = $("input[name=name]").val();
-		var num = $("input[name=num]").val();
-		var id = $("input[name=id]").val();
-		//3、与后台进行交互
-		var data;
-		if(id){
-			data = "id="+id+"&name="+name+"&num"+num
-		}else{
-			data = "name="+name+"&num="+num
-		}
-		var url = "/category/updateCategory"
-		$.post(baseURL+url,data,function(result){
-			alert(result.message);
-			initData();
+	$(".forms input[type = submit]").on("click", function(event){
+			// 1. 校验有效性
+			// 2. 获取有效值
+			var name = $("input[name=name]").val();
+			var num = $("input[name=num]").val();
+			var id = $("input[name=id]").val();
+			// 3. 与后台进行交互
+			var data;
+			if(id){
+				data = "id="+id+"&name="+name+"&num="+num
+			} else {
+				data = "name="+name+"&num="+num
+			}
+			var url = "/category/updateCategory"
+			$.post(baseURL+url,data,function(result){
+				alert(result.message);
+				initData();
+			});
+			//阻止默认事件
+			event.preventDefault();
 		});
-		//阻止默认事件
-		event.preventDefault();
-	});
-}
+} 
 
 
 
 
 
 $(function(){
-	initData();
-	add();
-	del();
-	save();
-});
+//查询所有分类信息
+initData();
+//执行添加按钮函数
+add();
+//删除功能
+del();
+//根据Id修改数据并保存
+save();
+
+})
 </script>
+
+
 
 
 
@@ -173,7 +196,7 @@ $(function(){
 		</form>
 	</div>
 	<table class="table" id="customer_tbl">
-		<thead>												
+		<thead>
 			<tr>
 				<th width="60px">编号</th>
 				<th width="200px">分类名称</th>
@@ -188,3 +211,6 @@ $(function(){
 	</table>
 
 </div>
+
+</body>
+</html>
