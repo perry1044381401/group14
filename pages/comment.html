@@ -21,11 +21,19 @@
 		line-height: 2em;
 		text-align: center;
 	}
+<<<<<<< HEAD
 
 	table.table tr.current {
 		background-color: #ededed;
 	}
 
+=======
+
+	table.table tr.current {
+		background-color: #ededed;
+	}
+
+>>>>>>> 567c15487f0576f52d943cecdc3b805a17774c4b
 	.none {
 		display: none;
 	}
@@ -39,7 +47,10 @@ function initData(){
 	$.get(baseURL+url,function(response){
 		$("#customer_tbl > tbody").empty();
 		response.data.forEach(function(item){
+<<<<<<< HEAD
 			console.log(item)
+=======
+>>>>>>> 567c15487f0576f52d943cecdc3b805a17774c4b
 			var newTr = $(`<tr>
 				<td><input type="checkbox" value="`+item.id+`"></td>
 				<td>`+item.content+`</td>
@@ -77,17 +88,30 @@ function initData(){
  //删除/修改功能
  function del() {
  	//为删除按钮绑定事件
+<<<<<<< HEAD
  		$("#customer_tbl > tbody").on("click","a",function(){
+=======
+ 		$("#customer_tbl >tbody").on("click","a",function(){
+>>>>>>> 567c15487f0576f52d943cecdc3b805a17774c4b
  			switch(this.className){
  				case "btn_del":
  					var url = baseURL+"/comment/deleteCommentById";     //从后台寻找删除评论的id地址
  					// 获取id
+<<<<<<< HEAD
  					var id = $(this).parents("tr").find('td:nth-child(1)').find("input").val();
  					console.log($(this).parents("tr").find('td:nth-child(1)').find("input"),'=====')
  					var data = "id="+id;
  					alert(data);
  					$.post(url,data,function(result){
  						console.log(result.message);
+=======
+ 					var id = $(this).parents("tr").find("input").val();
+
+ 					var data = "id="+id;
+ 					alert(data);
+ 					$.post(url,data,function(result){
+ 						alert(result.message);
+>>>>>>> 567c15487f0576f52d943cecdc3b805a17774c4b
  						initData();
  					});
  					break;
@@ -119,7 +143,11 @@ $(function(){
 </script>
 <div class="customer">
 	<div class="btns">
+<<<<<<< HEAD
 		<div class="btn" id="btn_add">评论</div>
+=======
+		<div class="btn" id="btn_add">添加</div>
+>>>>>>> 567c15487f0576f52d943cecdc3b805a17774c4b
 		<div class="btn">批量导入</div>
 		<div class="btn">批量删除</div>
 	</div>
