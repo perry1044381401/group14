@@ -208,24 +208,26 @@ $(function(){
 	
      //给批量删除绑定事件，将input为checked的id值放入数组ids中
      $("#btn_dels").click(function(){
-     	 var ids=[];     
-        $("input[name=check]:checked").each(function(){
-        	ids.push($(this).val());   
-        }); 
-        if(ids.length==0){
-        	alert("请先勾选编号2个以上");
-        }else{
-        	alert("是否删除");
-        	//传给后台的id值，以ids=xxx形式  
+     	   
+        if(confirm("是否删除")){
+        	var checks=$("input[name=check]:checked");
+        	if(checks.length==0){
+        		alert("请先勾选编号2个以上");
+        		return false;
+        	}
+        	var ids=[];
+            checks.each(function(){
+        	    ids.push($(this).val());   
+            }); 
+            //传给后台的id值，以ids=xxx形式  
 	        var data="ids="+ids;
 	        var url="/customer/batchDeleteCustomer";
 	        $.post(baseURL+url,data,function(response){
 	        	alert(response.message);
 	        	initData();   	
-	        })
+	        });          	
         }
        
-        
 	})
 
 	//鼠标移入移出
