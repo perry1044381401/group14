@@ -69,7 +69,7 @@ function initData(){
 	var url = "/waiter/findAllWaiter"
 	$.get(baseURL+url,function(response){
 		//清空表单数据
-		$("#customer_tbl > tbody").empty();
+		$("#waiter_tbl > tbody").empty();
 		response.data.forEach(function(item){
 			var newTr = $(`<tr>
 				<td><input type="checkbox" value="`+item.id+`" name="check"></td>
@@ -81,7 +81,7 @@ function initData(){
 					<a class="btn_upd" href="javascript:void(0)">修改</a>
 				</td>
 			</tr>`);
-			$("#customer_tbl > tbody").append(newTr);
+			$("#waiter_tbl > tbody").append(newTr);
 		});
 	});
 }
@@ -90,7 +90,7 @@ $(function(){
 	// 初始化加载
 	initData();
 	// 为删除按钮绑定事件
-	$("#customer_tbl > tbody").on("click","a",function(){
+	$("#waiter_tbl > tbody").on("click","a",function(){
 		switch(this.className){
 			case "btn_del":
 				//找到要删除那行的id值
@@ -163,7 +163,7 @@ $(function(){
 		})
 	});
 	//通过点击编号框，使input变成checked
-	 $("#customer_tbl > tbody").on("click","input",function(){
+	 $("#waiter_tbl > tbody").on("click","input",function(){
        $("input[name=check]").prop("checked")==true;  
          	       
     });
@@ -184,11 +184,11 @@ $(function(){
 	})
 
 	//鼠标移入移出
-	$("#customer_tbl > tbody").on("mouseover","tr",function(){
+	$("#waiter_tbl > tbody").on("mouseover","tr",function(){
 		$(this).css("background-color"," #88C1DF");
 		$(this).css("color"," #fff");
 	});
-	$("#customer_tbl > tbody").on("mouseout","tr",function(){
+	$("#waiter_tbl > tbody").on("mouseout","tr",function(){
 		$(this).css("background-color","");
 		$(this).css("color","#333");
 	});
@@ -196,7 +196,7 @@ $(function(){
 	})
 
 </script>
-<div class="customer">
+<div class="waiter">
 	<div class="btns">
 		<div class="btn" id="btn_add">添加</div>
 		<div class="btn">批量导入</div>
@@ -208,12 +208,12 @@ $(function(){
 			<table id="add">
 				<tbody>
 					<tr>
-						<td>姓名</td>
+						<td>姓名：</td>
 						<td><input type="text" name="realname"></td>
 						<td></td>
-					</tr>
-					<tr>
-						<td>手机号</td>
+						
+					
+						<td>手机号：</td>
 						<td><input type="text" name="telephone"></td>
 						<td></td>
 					</tr>
@@ -225,12 +225,12 @@ $(function(){
 			</table>
 		</form>
 	</div>
-	<table class="table" id="customer_tbl">
+	<table class="table" id="waiter_tbl">
 		<thead>
 			<tr>
 				<th width="60px">编号</th>
 				<th width="200px">姓名</th>
-				<th>头像</th>
+				<th>状态</th>
 				<th>手机</th>
 				<th width="100px">操作</th>
 			</tr>
