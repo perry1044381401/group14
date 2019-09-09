@@ -21,7 +21,7 @@ html,body,.container {
 	height: 85.5%;
 	float: left;
 	color: #ffffff;
-	background-image: linear-gradient(to right , #7A88FF, #7AFFAF);
+	background-image: linear-gradient(to right , #7A88FF,#5dd1e2, #7AFFAF);
 }
 .container > .left a {
 	color: #ffffff;
