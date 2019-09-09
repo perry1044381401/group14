@@ -1,6 +1,52 @@
+
 <meta charset="UTF-8">
 <title>订单管理</title>
-<link rel="stylesheet" href="./css/order.css">
+<style>
+	.btns {
+		margin: 5px;
+	}
+	.btn {
+		display: inline-block;/* 不占满整个父元素 */
+		padding: .3em 1.2em;
+		border-radius: 3px;
+		/*background-color: teal;
+		color: #fff;*/
+		border: 1px solid #333;
+		cursor: pointer;/*手型*/
+
+	}
+	.search {
+		display: inline-block;不占满整个父元素
+		float: right;
+		border: 1px solid #333;
+		border-radius: 0.3em;
+		width: 200px;
+		height: 30.6px;
+		box-sizing: border-box;
+		
+	}
+	table.table {
+		margin-top: 15px;
+		box-sizing: border-box;
+		width: 100%;
+		border-collapse: collapse;
+	}
+	table.table td ,
+	table.table th {
+		border: 1px solid #ccc;
+		line-height: 2em;
+		text-align: center;
+	}
+
+	table.table tr.current {
+		background-color: #ededed;
+	}
+
+	.none {
+		display: none;
+	}
+</style>
+
 <script src="https://cdn.bootcss.com/jquery/3.4.1/jquery.min.js"></script>
 
 
