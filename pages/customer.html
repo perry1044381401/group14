@@ -1,4 +1,4 @@
-，<style>
+<style>
  	a{
  		text-decoration: none;
  		color:#B80000;
@@ -46,7 +46,7 @@
 		box-shadow: 1px 1px 5px #0D519C;
 
 	}
-	.btn_add_current{
+	.btn_add_current,.btn_dels_current{
 		background-color: #88C1DF;
 		color:#fff;
 		box-shadow: 1px 1px 5px #0D519C;
@@ -207,18 +207,25 @@ $(function(){
     });
 	
      //给批量删除绑定事件，将input为checked的id值放入数组ids中
-     $("#btn_dels").click(function(){       
-        var ids=[];     
+     $("#btn_dels").click(function(){
+     	 var ids=[];     
         $("input[name=check]:checked").each(function(){
         	ids.push($(this).val());   
         }); 
-        //传给后台的id值，以ids=xxx形式  
-         var data="ids="+ids;
-        var url="/customer/batchDeleteCustomer";
-        $.post(baseURL+url,data,function(response){
-        	alert(response.message);
-        	initData();   	
-        })
+        if(ids.length==0){
+        	alert("请先勾选编号2个以上");
+        }else{
+        	alert("是否删除");
+        	//传给后台的id值，以ids=xxx形式  
+	        var data="ids="+ids;
+	        var url="/customer/batchDeleteCustomer";
+	        $.post(baseURL+url,data,function(response){
+	        	alert(response.message);
+	        	initData();   	
+	        })
+        }
+       
+        
 	})
 
 	//鼠标移入移出
@@ -230,6 +237,12 @@ $(function(){
 		$(this).css("background-color","");
 		$(this).css("color","#333");
 	});
+    $(".btns").on("mouseover","div",function(){
+    	$(this).addClass("btn_add_current");
+    });
+    $(".btns").on("mouseout","div",function(){
+    	$(this).removeClass("btn_add_current");
+    });
 
 	})
 
