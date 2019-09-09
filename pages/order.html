@@ -15,15 +15,13 @@
 		cursor: pointer;/*手型*/
 
 	}
-	.search {
-		display: inline-block;不占满整个父元素
-		float: right;
-		border: 1px solid #333;
-		border-radius: 0.3em;
-		width: 200px;
+	.forms {
+		float: left;
+		padding-top: 10px;
+	}
+	.order .forms > form > input {
 		height: 30.6px;
-		box-sizing: border-box;
-		
+
 	}
 	table.table {
 		margin-top: 15px;
@@ -53,44 +51,13 @@
 <h3>订单管理</h3>
 <div class="order">
 	<div id="btns">
-		<div class="btn" id="btn_add">添加订单</div>
+		<div class="btn" id="btn_find">查询订单</div>
 		<div class="btn" id="btn_dels">批量删除</div>
 		<div class="btn">导出</div>
-		<!-- <div class="search"> -->
-			<input type="text" placeholder="请输入...">
-			<!-- <img src="./images/sousuo.png" alt="">
-		</div> -->
 	</div>
 	<div class="forms">
 		<form action="javascript:void(0);" class="">
-			<input type="hidden" name="id">
-			<table>
-				<tbody>
-					<tr>
-						<td>顾客编号</td>
-						<td><input type="text" name="customerId"></td>
-						<td></td>
-					</tr>
-					<tr>
-						<td>地址编号</td>
-						<td><input type="text" name="addressId"></td>
-						<td></td>
-					</tr>
-					<tr>
-						<td>员工编号</td>
-						<td><input type="password" name="waiterId"></td>
-						<td></td>
-					</tr>
-					<tr>
-						<td>总计个数</td>
-						<td><input type="text" name="total"></td>
-						<td></td>
-					</tr>
-					<tr>
-						<td class="submit"><input type="submit" value="保存"></td>
-					</tr>
-				</tbody>
-			</table>
+			<input type="text" name="id" placeholder="请输入订单号">	
 		</form>
 	</div>
 	<table class="table" id="order_tbl">
@@ -123,12 +90,9 @@
 	</table>
 	
 </div>
-	<div>
-		<tr></tr>
-	</div>
 <script>
 	var baseURL = "http://134.175.154.93:6677";
-	var btn_add = document.getElementById("btn_add");
+	var btn_find = document.getElementById("btn_find");
 	var tbody = document.getElementsByTagName("tbody")[0];
 
 	initData();
@@ -157,68 +121,72 @@
 				</td>
 			</tr>`);
 				$("#order_tbl > tbody").append(newTr);
+				//追加
+				$("#order_tbl > tbody > tr").on("mouseover",function(){
+					$(this).css("background","#ccc");
+				})
+				$("#order_tbl > tbody > tr").on("mouseout",function(){
+					$(this).css("background","#fff");
+				})
 				//alert(1);
 			});
 		});
 
 	}
 
-	//onclick,为添加按钮绑定事件
-	btn_add.onclick = function(event){	
-		document.querySelector("input[name=customerId]").value = "";
-		document.querySelector("input[name=addressId]").value = "";
-		document.querySelector("input[name=waiterId]").value = "";
-		document.querySelector("input[name=total]").value = "";
-	};
-
-	//为保存按钮添加绑定事件
-	document.forms[0].onsubmit = function(event){
-		//1. 校验
-		//alert(1);
-		//2. 获取有效值
-		var realname = document.querySelector("input[name=customerId]").value
-		var telephone = document.querySelector("input[name=addressId]").value;
-		var telephone = document.querySelector("input[name=waiterId]").value;
-		var telephone = document.querySelector("input[name=total]").value;
+	//onclick,为查询按钮绑定事件
+	btn_find.onclick = function(event){	
 		var id = document.querySelector("input[name=id]").value;
-		//3. 与后台进行交互
-		var url = baseURL+"/orderLine/updateOrderLinePrimaryKey";
-			var data;
-			if(id){
-				data = "id="+id+"&customerId="+customerId+"&addressId="+addressId+"&waiterId"+waiterId+"&total"+total
-			} else {
-				//alert(1);
-				data = "customerId="+customerId+"&addressId="+addressId+"&waiterId"+waiterId+"&total"+total
-			}
-			//ajax
-			$.post(url,data,function(result){
-				alert(result.message);
-				initData();
-			});
-			event.preventDefault();
-		}
-
-
+		//alert(id);
+		var url = "/order/findOrderById";
+		var data = "id="+id;
+		$.get(baseURL+url,data,function(response){
+			$("#order_tbl > tbody").empty();//清空列表内容
+			var newTr = $(`<tr>
+				<td><input type="checkbox" value="`+response.data.id+`" name="check"></td>
+				<td>`+response.data.customerId+`</td>
+				<td>`+response.data.addressId+`</td>
+				<td>`+response.data.orderTime+`</td>
+				<td>`+response.data.waiterId+`</td>
+				<td>`+response.data.total+`</td>
+				<td>
+					<a class="btn_del" href="javascript:void(0)">删除</a>
+					<a class="btn_upd" href="javascript:void(0)">修改</a>
+					<a class="btn_det" href="javascript:void(0)">详情</a>
+				</td>
+			</tr>`);
+				$("#order_tbl > tbody").append(newTr);
+				//追加
+				$("#order_tbl > tbody > tr").on("mouseover",function(){
+					$(this).css("background","#ccc");
+				})
+				$("#order_tbl > tbody > tr").on("mouseout",function(){
+					$(this).css("background","#fff");
+				})
+		});
+	};
+	
 	//为删除按钮绑定事件
 	tbody.onclick = function(event){
 		if(event.target.nodeName === "A") {
 			switch(event.target.className){
 				case "btn_del":
 					//0. 获取当前的id
-					var id = event.target.parentNode.parentNode.children[0].children[0].value;
+					/*var id = event.target.parentNode.parentNode.children[0].children[0].value;
 					alert(id);
 					var url = baseURL+"/order/deleteOrderById";
 					var data = "id="+id;
 					$.post(url,data,function(result){
 						//alert(1);
 						initData();
-					})
+					})*/
+					alert(1);
 					break;
 				//为修改按钮绑定事件
 				case "btn_upd":
 					//alert(1);
 					//1. 将原有的信息放到表单中
-					var id = event.target.parentNode.parentNode.children[0].children[0].value;
+					/*var id = event.target.parentNode.parentNode.children[0].children[0].value;
 					var realname = event.target.parentNode.parentNode.children[1].innerText
 					var realname = event.target.parentNode.parentNode.children[2].innerText
 					var telephone = event.target.parentNode.parentNode.children[4].innerText;
@@ -227,36 +195,14 @@
 					document.querySelector("input[name=addressId]").value = addressId;
 					document.querySelector("input[name=waiterId]").value = waiterId;
 					document.querySelector("input[name=total]").value = total;
-					document.querySelector("input[name=id]").value = id;
+					document.querySelector("input[name=id]").value = id;*/
+					alert(2);
 					break;
 				}
 			}
 		}
 	
 
-	//为详情按钮绑定事件
-
-	//为批量删除按钮绑定事件
-
-	//为光标所在行添加背景色
-	tbody.onmouseover = function(event){
-		//console.log(event);
-		var target = event.target;
-		if(target.nodeName == "TD"){
-			target.parentNode.className = "current"
-		}
-	}
-	//鼠标移出来时背景色取消
-	tbody.onmouseout = function(event){
-		//console.log(event);
-		var target = event.target;
-		if(target.nodeName == "TD"){
-			target.parentNode.className = ""
-		}
-	}
-
-
-	//分页跳转设计
 
 </script>
 
