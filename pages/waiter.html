@@ -60,7 +60,7 @@
 		height: 25px;
 	}
 </style>
-<script src="https://cdn.bootcss.com/jquery/3.4.1/jquery.min.js">
+<script src="https://cdn.bootcss.com/jquery/3.4.0/jquery.min.js">
 </script>
 <script>
 	var baseURL = "http://134.175.154.93:6677";
@@ -69,7 +69,7 @@ function initData(){
 	var url = "/waiter/findAllWaiter"
 	$.get(baseURL+url,function(response){
 		//清空表单数据
-		$("#customer_tbl > tbody").empty();
+		$("#waiter_tbl > tbody").empty();
 		response.data.forEach(function(item){
 			var newTr = $(`<tr>
 				<td><input type="checkbox" value="`+item.id+`" name="check"></td>
@@ -82,7 +82,7 @@ function initData(){
 					<a class="btn_det" href="javascript:void(0);">详情</a>
 				</td>
 			</tr>`);
-			$("#customer_tbl > tbody").append(newTr);
+			$("#waiter_tbl > tbody").append(newTr);
 		});
 	});
 }
@@ -91,14 +91,14 @@ $(function(){
 	// 初始化加载
 	initData();
 	// 为删除按钮绑定事件
-	$("#customer_tbl > tbody").on("click","a",function(){
+	$("#waiter_tbl > tbody").on("click","a",function(){
 		switch(this.className){
 			case "btn_del":
 				//找到要删除那行的id值
 				var id = $(this).parents("tr").find("input").val();
 				var url="/waiter/deleteWaiterById";
 				var data="id="+id;
-				$.post(baseURL+url,data,function(response){
+				$.get(baseURL+url,data,function(response){
 					alert(response.message);
 					initData();
 				});
@@ -146,26 +146,28 @@ $(function(){
 				realname:realname,
 				telephone:telephone
 			}
+			var url="/waiter/updateWaiter";
+		$.post(baseURL+url,data,function(response){
+			alert(response.message);
+			initData();
+		})
 		}else{
 			data={
 				realname:realname,
 				telephone:telephone
 			}
+			var url="/waiter/insertWaiter";
+		$.post(baseURL+url,data,function(response){
+			alert(response.message);
+			initData();
+		})
 		}
-		var url="/waiter/insertWaiter";
-		$.post(baseURL+url,data,function(response){
-			alert(response.message);
-			initData();
-		})
-		var url="/waiter/updateWaiter";
-		$.post(baseURL+url,data,function(response){
-			alert(response.message);
-			initData();
-		})
+		
+		
 	});
 
 	//通过点击编号框，使input变成checked
-	 $("#customer_tbl > tbody").on("click","input",function(){
+	 $("#waiter_tbl > tbody").on("click","input",function(){
        $("input[name=check]").prop("checked")==true;  
          	       
     });
@@ -188,19 +190,19 @@ $(function(){
 	})
 
 	//鼠标移入移出
-	$("#customer_tbl > tbody").on("mouseover","tr",function(){
+	$("#waiter_tbl > tbody").on("mouseover","tr",function(){
 		$(this).css("background-color"," #88C1DF");
 		$(this).css("color"," #fff");
 	});
-	$("#customer_tbl > tbody").on("mouseout","tr",function(){
+	$("#waiter_tbl > tbody").on("mouseout","tr",function(){
 		$(this).css("background-color","");
 		$(this).css("color","#333");
 	});
-	$("#customer_tbl > tbody").on("mouseover","a",function(){
+	$("#waiter_tbl > tbody").on("mouseover","a",function(){
 		$(this).css("background-color"," #88C1DF");
 		$(this).css("color"," #B80000");
 	});
-	$("#customer_tbl > tbody").on("mouseout","a",function(){
+	$("#waiter_tbl > tbody").on("mouseout","a",function(){
 		$(this).css("background-color","");
 		$(this).css("color","#333");
 	});
@@ -237,7 +239,7 @@ $(function(){
 			</table>
 		</form>
 	</div>
-	<table class="table" id="customer_tbl">
+	<table class="table" id="waiter_tbl">
 		<thead>
 			<tr>
 				<th width="60px">编号</th>
