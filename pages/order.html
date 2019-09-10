@@ -82,8 +82,8 @@
 			<td>1</td>
 			<td>
 				<a class="btn_del" href="javascript:void(0)">删除</a>
-				<a class="btn_upd" href="javascript:void(0)">修改</a>
-				<a class="btn_detail" href="javascript:void(0)">详情</a>
+				<!-- <a class="btn_upd" href="javascript:void(0)">修改</a> -->
+				<a class="btn_det" href="javascript:void(0)">详情</a>
 			</td>
 		</tr>
 	</tbody>
@@ -94,6 +94,8 @@
 	var baseURL = "http://134.175.154.93:6677";
 	var btn_find = document.getElementById("btn_find");
 	var tbody = document.getElementsByTagName("tbody")[0];
+	var btn_det = document.getElementById("btn_det");
+	var btn_dels = document.getElementById("btn_dels");
 
 	initData();
 	//初始化数据
@@ -116,7 +118,7 @@
 				<td>`+item.total+`</td>
 				<td>
 					<a class="btn_del" href="javascript:void(0)">删除</a>
-					<a class="btn_upd" href="javascript:void(0)">修改</a>
+					
 					<a class="btn_det" href="javascript:void(0)">详情</a>
 				</td>
 			</tr>`);
@@ -151,7 +153,7 @@
 				<td>`+response.data.total+`</td>
 				<td>
 					<a class="btn_del" href="javascript:void(0)">删除</a>
-					<a class="btn_upd" href="javascript:void(0)">修改</a>
+					
 					<a class="btn_det" href="javascript:void(0)">详情</a>
 				</td>
 			</tr>`);
@@ -166,46 +168,41 @@
 		});
 	};
 	
-	//为删除按钮绑定事件
+	//为删除/详情按钮绑定事件
 	tbody.onclick = function(event){
 		if(event.target.nodeName === "A") {
 			switch(event.target.className){
 				case "btn_del":
-					//0. 获取当前的id
-					/*var id = event.target.parentNode.parentNode.children[0].children[0].value;
-					alert(id);
-					var url = baseURL+"/order/deleteOrderById";
-					var data = "id="+id;
-					$.post(url,data,function(result){
+				//0. 获取当前的id
+				var id = event.target.parentNode.parentNode.children[0].children[0].value;
+				var url = baseURL+"/order/deleteOrderById";
+				var data = "id="+id;
+
+				var result = confirm("确认删除吗？");	
+					if (result) {
 						//alert(1);
-						initData();
-					})*/
-					alert(1);
-					break;
-				//为修改按钮绑定事件
-				case "btn_upd":
-					//alert(1);
-					//1. 将原有的信息放到表单中
-					/*var id = event.target.parentNode.parentNode.children[0].children[0].value;
-					var realname = event.target.parentNode.parentNode.children[1].innerText
-					var realname = event.target.parentNode.parentNode.children[2].innerText
-					var telephone = event.target.parentNode.parentNode.children[4].innerText;
-					var realname = event.target.parentNode.parentNode.children[5].innerText
-					document.querySelector("input[name=customerId]").value = customerId;
-					document.querySelector("input[name=addressId]").value = addressId;
-					document.querySelector("input[name=waiterId]").value = waiterId;
-					document.querySelector("input[name=total]").value = total;
-					document.querySelector("input[name=id]").value = id;*/
-					alert(2);
-					break;
-				}
+						$.post(url,data,function(result){
+							//alert(1);
+							initData();
+						})
+					}else{
+						//alert(2);
+					}
+				break;
+
+				case "btn_det":
+				var id = event.target.parentNode.parentNode.children[0].children[0].value;
+				alert(id);
 			}
 		}
-	
+	}
 
+	//为批量删除按钮绑定事件
+	btn_dels.onclick = function(event){
+		var url = baseURL+"/order/batchDeleteOrder";
+	}
 
 </script>
-
 
 
 
