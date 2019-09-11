@@ -52,7 +52,7 @@
 <div class="order">
 	<div id="btns">
 		<div class="btn" id="btn_find">查询订单</div>
-		<div class="btn" id="btn_dels">批量删除</div>
+		<div class="btn" id="btn_batch_del">批量删除</div>
 		<div class="btn">导出</div>
 	</div>
 	<div class="forms">
@@ -95,112 +95,146 @@
 	var btn_find = document.getElementById("btn_find");
 	var tbody = document.getElementsByTagName("tbody")[0];
 	var btn_det = document.getElementById("btn_det");
-	var btn_dels = document.getElementById("btn_dels");
+	/*var btn_batch_del = document.getElementById("btn_batch_del");*/
 
-	initData();
-	//初始化数据
-	function initData(){
-		//获取后台数据，然后将数据显示在表格中
-		var url = "/order/findAllOrder";
-		$.get(baseURL+url,function(response){
-			//先将tbody中的数据清空
-			
-			$("#order_tbl > tbody").empty();//清空列表内容
+initData();
+//初始化数据
+function initData(){
+	//获取后台数据，然后将数据显示在表格中
+	var url = "/order/findAllOrder";
+	$.get(baseURL+url,function(response){
+		//先将tbody中的数据清空
+		
+		$("#order_tbl > tbody").empty();//清空列表内容
+		//alert(1);
+		response.data.forEach(function(item){
 			//alert(1);
-			response.data.forEach(function(item){
-				//alert(1);
-				var newTr = $(`<tr>
-				<td><input type="checkbox" value="`+item.id+`" name="check"></td>
-				<td>`+item.customerId+`</td>
-				<td>`+item.addressId+`</td>
-				<td>`+item.orderTime+`</td>
-				<td>`+item.waiterId+`</td>
-				<td>`+item.total+`</td>
-				<td>
-					<a class="btn_del" href="javascript:void(0)">删除</a>
-					
-					<a class="btn_det" href="javascript:void(0)">详情</a>
-				</td>
-			</tr>`);
-				$("#order_tbl > tbody").append(newTr);
-				//追加
-				$("#order_tbl > tbody > tr").on("mouseover",function(){
-					$(this).css("background","#ccc");
-				})
-				$("#order_tbl > tbody > tr").on("mouseout",function(){
-					$(this).css("background","#fff");
-				})
-				//alert(1);
-			});
-		});
-
-	}
-
-	//onclick,为查询按钮绑定事件
-	btn_find.onclick = function(event){	
-		var id = document.querySelector("input[name=id]").value;
-		//alert(id);
-		var url = "/order/findOrderById";
-		var data = "id="+id;
-		$.get(baseURL+url,data,function(response){
-			$("#order_tbl > tbody").empty();//清空列表内容
 			var newTr = $(`<tr>
-				<td><input type="checkbox" value="`+response.data.id+`" name="check"></td>
-				<td>`+response.data.customerId+`</td>
-				<td>`+response.data.addressId+`</td>
-				<td>`+response.data.orderTime+`</td>
-				<td>`+response.data.waiterId+`</td>
-				<td>`+response.data.total+`</td>
-				<td>
-					<a class="btn_del" href="javascript:void(0)">删除</a>
-					
-					<a class="btn_det" href="javascript:void(0)">详情</a>
-				</td>
-			</tr>`);
-				$("#order_tbl > tbody").append(newTr);
-				//追加
-				$("#order_tbl > tbody > tr").on("mouseover",function(){
-					$(this).css("background","#ccc");
-				})
-				$("#order_tbl > tbody > tr").on("mouseout",function(){
-					$(this).css("background","#fff");
-				})
+			<td><input type="checkbox" value="`+item.id+`" name="check"></td>
+			<td>`+item.customerId+`</td>
+			<td>`+item.addressId+`</td>
+			<td>`+item.orderTime+`</td>
+			<td>`+item.waiterId+`</td>
+			<td>`+item.total+`</td>
+			<td>
+				<a class="btn_del" href="javascript:void(0)">删除</a>
+				
+				<a class="btn_det" href="javascript:void(0)">详情</a>
+			</td>
+		</tr>`);
+			$("#order_tbl > tbody").append(newTr);
+			//追加
+			$("#order_tbl > tbody > tr").on("mouseover",function(){
+				$(this).css("background","#ccc");
+			})
+			$("#order_tbl > tbody > tr").on("mouseout",function(){
+				$(this).css("background","#fff");
+			})
+			//alert(1);
 		});
-	};
-	
-	//为删除/详情按钮绑定事件
-	tbody.onclick = function(event){
-		if(event.target.nodeName === "A") {
-			switch(event.target.className){
-				case "btn_del":
-				//0. 获取当前的id
-				var id = event.target.parentNode.parentNode.children[0].children[0].value;
-				var url = baseURL+"/order/deleteOrderById";
-				var data = "id="+id;
+	});
 
-				var result = confirm("确认删除吗？");	
-					if (result) {
+}
+
+//onclick,为查询按钮绑定事件
+btn_find.onclick = function(event){	
+	var id = document.querySelector("input[name=id]").value;
+	//alert(id);
+	var url = "/order/findOrderById";
+	var data = "id="+id;
+	$.get(baseURL+url,data,function(response){
+		$("#order_tbl > tbody").empty();//清空列表内容
+		var newTr = $(`<tr>
+			<td><input type="checkbox" value="`+response.data.id+`" name="check"></td>
+			<td>`+response.data.customerId+`</td>
+			<td>`+response.data.addressId+`</td>
+			<td>`+response.data.orderTime+`</td>
+			<td>`+response.data.waiterId+`</td>
+			<td>`+response.data.total+`</td>
+			<td>
+				<a class="btn_del" href="javascript:void(0)">删除</a>
+				
+				<a class="btn_det" href="javascript:void(0)">详情</a>
+			</td>
+		</tr>`);
+		$("#order_tbl > tbody").append(newTr);
+		//追加
+		$("#order_tbl > tbody > tr").on("mouseover",function(){
+			$(this).css("background","#ccc");
+		})
+		$("#order_tbl > tbody > tr").on("mouseout",function(){
+			$(this).css("background","#fff");
+		})
+	});
+};
+
+//为删除/详情按钮绑定事件
+$("#order_tbl > tbody").on("click","a",function(){
+	switch(this.className){
+		case "btn_del":
+			//0. 获取当前的id
+			var id = event.target.parentNode.parentNode.children[0].children[0].value;
+			var url = baseURL+"/order/deleteOrderById";
+			var data = "id="+id;
+
+			var result = confirm("确认删除吗？");	
+				if (result) {
+					//alert(1);
+					$.post(url,data,function(result){
 						//alert(1);
-						$.post(url,data,function(result){
-							//alert(1);
-							initData();
-						})
-					}else{
-						//alert(2);
-					}
-				break;
+						initData();
+					})
+				}else{
+					//alert(2);
+				}
+			break;
 
-				case "btn_det":
-				var id = event.target.parentNode.parentNode.children[0].children[0].value;
-				alert(id);
+			case "btn_det":
+			var id = event.target.parentNode.parentNode.children[0].children[0].value;
+			alert(id);
+	}
+})
+
+
+//为批量删除按钮绑定事件
+$(function(){
+	//初始化加载
+	initData();
+	//为批量删除绑定事件处理函数
+	$("#btn_batch_del").click(function(){
+		var ids = $("input[type=checkbox]:checked")
+		.map(function(index,item){
+			return $(item).val()
+		})
+		.toArray();
+		var url = baseURL+"/order/batchDeleteOrder"
+		var data = "";
+		var result = confirm("确认删除吗？");	
+		//确认是否删除
+		if (result) {
+			//alert(1);
+			for(var index in ids){
+				var id = ids[index];
+				if(index == 0){
+					data += "ids="+id
+				} else {
+					data += "&ids="+id
+				}	
 			}
+			$.post(url,data,function(result){
+				if(result.status ==200){
+					alert("删除成功");
+					initData();
+				} else {
+					alert(result.message);
+				}
+			});
+		}else{
+			//alert(2);
 		}
-	}
-
-	//为批量删除按钮绑定事件
-	btn_dels.onclick = function(event){
-		var url = baseURL+"/order/batchDeleteOrder";
-	}
+		
+	})
+})
 
 </script>
 
